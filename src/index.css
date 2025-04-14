@@ -20,7 +20,10 @@ main {
   position: absolute;
 }
 .element.selected {
-  border: 1px dashed black;
+  border: 1px dashed #2aa5fe;
+}
+.element.selected > .shape {
+  border: 1px solid #2aa5fe;
 }
 .shape {
   width: 100%;
@@ -30,10 +33,14 @@ main {
 .circle {
   border-radius: 50%;
 }
+.frame {
+  overflow: hidden;
+}
 .size {
-  width: 5px;
-  height: 5px;
-  background-color: black;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #2aa5fe;
+  background-color: white;
   position: absolute;
   border-radius: 50%;
   cursor: all-scroll;

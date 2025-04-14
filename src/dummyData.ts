@@ -41,7 +41,7 @@ const element = [
         type: "text",
         position: { x: 10, y: 40 },
         flip: { horizontal: false, vertical: false },
-        text: "Hello Frame!",
+        text: "Hello Framemememememe! mememememememememememememe",
         style: {
           background: "#fff",
           color: "#000",

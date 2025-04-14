@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 interface ElementComponentProps {
   element: {
     id: string;
@@ -10,35 +12,78 @@ interface ElementComponentProps {
     style: Record<string, string | number>;
     children?: Array<any>;
   };
-  dblClickHandler: () => void;
-  selected: boolean;
+  setSelectedElement: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedElement: string | null;
 }
 const ElementConponent = ({
   element,
-  dblClickHandler,
-  selected,
+  setSelectedElement,
+  selectedElement,
 }: ElementComponentProps) => {
+  const dblClickHandler = (event: React.MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation();
+    event.preventDefault();
+    setSelectedElement(element.id);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".element")) {
+        setSelectedElement(null);
+      }
+    };
+    if (selectedElement === element.id) {
+      document.addEventListener("click", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  });
   return (
     <div
-      className={`element ${selected ? "selected" : ""}`}
+      className={`element ${selectedElement === element.id ? "selected" : ""}`}
       style={{
         left: element.position.x,
         top: element.position.y,
         width: element.width,
         height: element.height,
       }}
-      onDoubleClick={dblClickHandler}
+      onDoubleClick={(e) => dblClickHandler(e)}
     >
-      <div className={`shape ${element.type}`} style={element.style}>
-        {selected && (
-          <>
-            <div className="size left top"></div>
-            <div className="size left bottom"></div>
-            <div className="size right top"></div>
-            <div className="size right bottom"></div>
-          </>
-        )}
-      </div>
+      {element.type === "text" ? (
+        <p className={`shape ${element.type}`} style={element.style}>
+          {selectedElement === element.id && (
+            <>
+              <div className="size left top"></div>
+              <div className="size left bottom"></div>
+              <div className="size right top"></div>
+              <div className="size right bottom"></div>
+            </>
+          )}
+          {element.text}
+        </p>
+      ) : (
+        <div className={`shape ${element.type}`} style={element.style}>
+          {selectedElement === element.id && (
+            <>
+              <div className="size left top"></div>
+              <div className="size left bottom"></div>
+              <div className="size right top"></div>
+              <div className="size right bottom"></div>
+            </>
+          )}
+          {element.type === "frame" &&
+            element.children?.map((child) => (
+              <ElementConponent
+                key={child.id}
+                element={child}
+                setSelectedElement={setSelectedElement}
+                selectedElement={selectedElement}
+              />
+            ))}
+        </div>
+      )}
     </div>
   );
 };
